@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Game</title>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="light-theme">
+    <div class="start-screen">
+        <h1>Sudoku</h1>
+        <p class="big-text">A simple sudoku game</p>
+        <p class="small-text">Select a difficulty:</p>
+        <button onclick="setDifficulty(55, 'Easy')">Easy</button>
+        <button onclick="setDifficulty(40, 'Medium')">Medium</button>
+        <button onclick="setDifficulty(28, 'Hard')">Hard</button>
+    </div>
+    <div class="nav">
+        <a onclick="openStartScreen()">Back</a>
+        <h2 class="nav-title">Sudoku</h2>
+        <a onclick="toggleTheme()">Dark/Light</a>
+    </div>
+    <!-- <button onclick="toggleNoteMode()">Toggle Notes</button> -->
+    <div class="game-screen">
+        <div class="game-screen-grid">
+            <h3 id="difficulty-text">Default</h3>
+            <div class="sudoku-grid-wrapper">
+                <div class="grid" id="sudokuGrid"></div>
+                <div class="row-notes"></div>
+                <div class="victory-message">
+                    Victory!
+                </div>
+            </div>
+            <div class="column-notes"></div>
+        </div>
+        <div class="game-screen-controls">
+            <a class="game-btn" onclick="toggleNoteMode()">
+                <div class="game-btn-icon" id="note-btn">
+                    <div class="toggle-indicator">OFF</div>
+                    <svg width="50" height="51" viewBox="0 0 50 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.2"
+                            d="M43.293 18.1445L37.5 23.9375L26.5625 13L32.3555 7.20704C32.6485 6.91424 33.0457 6.74976 33.46 6.74976C33.8742 6.74976 34.2715 6.91424 34.5645 7.20704L43.293 15.9297C43.4388 16.0749 43.5546 16.2475 43.6336 16.4375C43.7125 16.6275 43.7532 16.8313 43.7532 17.0371C43.7532 17.2429 43.7125 17.4467 43.6336 17.6367C43.5546 17.8268 43.4388 17.9994 43.293 18.1445Z"
+                            fill="currentColor" />
+                        <path
+                            d="M44.3985 14.8301L35.6699 6.10352C35.3797 5.81326 35.0352 5.58301 34.656 5.42592C34.2768 5.26883 33.8704 5.18797 33.46 5.18797C33.0495 5.18797 32.6431 5.26883 32.2639 5.42592C31.8847 5.58301 31.5402 5.81326 31.25 6.10352L7.16603 30.1875C6.87459 30.4766 6.64352 30.8208 6.48626 31.2C6.32901 31.5793 6.2487 31.986 6.25002 32.3965V41.125C6.25002 41.9538 6.57926 42.7487 7.16531 43.3347C7.75136 43.9208 8.54621 44.25 9.37502 44.25H42.1875C42.6019 44.25 42.9993 44.0854 43.2924 43.7924C43.5854 43.4993 43.75 43.1019 43.75 42.6875C43.75 42.2731 43.5854 41.8757 43.2924 41.5826C42.9993 41.2896 42.6019 41.125 42.1875 41.125H22.5235L44.3985 19.25C44.6887 18.9598 44.919 18.6153 45.076 18.2361C45.2331 17.8569 45.314 17.4505 45.314 17.04C45.314 16.6296 45.2331 16.2232 45.076 15.844C44.919 15.4648 44.6887 15.1203 44.3985 14.8301ZM15.4922 37.2188L32.0313 20.6777L35.291 23.9375L18.75 40.4785L15.4922 37.2188ZM13.2813 35.0098L10.0215 31.75L26.5625 15.209L29.8223 18.4688L13.2813 35.0098ZM9.37502 35.5215L14.9785 41.125H9.37502V35.5215ZM37.5 21.7285L28.7735 13L33.461 8.3125L42.1875 17.041L37.5 21.7285Z"
+                            fill="currentColor" />
+                    </svg>
+                </div>
+                Notes
+            </a>
+            <a class="game-btn" onclick="toggleHighlights()">
+                <div class="game-btn-icon" id="highlight-btn">
+                    <div class="toggle-indicator">OFF</div>
+                    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M29.3333 8.5C29.3333 9.60507 29.7723 10.6649 30.5537 11.4463C31.3351 12.2277 32.3949 12.6667 33.5 12.6667M29.3333 8.5C29.3333 7.39493 29.7723 6.33512 30.5537 5.55372C31.3351 4.77232 32.3949 4.33333 33.5 4.33333M29.3333 8.5H2.25M33.5 12.6667C34.6051 12.6667 35.6649 12.2277 36.4463 11.4463C37.2277 10.6649 37.6667 9.60507 37.6667 8.5M33.5 12.6667V29.3333M37.6667 8.5C37.6667 7.39493 37.2277 6.33512 36.4463 5.55372C35.6649 4.77232 34.6051 4.33333 33.5 4.33333M37.6667 8.5H39.75M33.5 4.33333V2.25M4.33333 21C4.33333 22.1051 4.77232 23.1649 5.55372 23.9463C6.33512 24.7277 7.39493 25.1667 8.5 25.1667M4.33333 21C4.33333 19.8949 4.77232 18.8351 5.55372 18.0537C6.33512 17.2723 7.39493 16.8333 8.5 16.8333M4.33333 21H2.25M8.5 25.1667C9.60507 25.1667 10.6649 24.7277 11.4463 23.9463C12.2277 23.1649 12.6667 22.1051 12.6667 21M8.5 25.1667V29.3333M12.6667 21C12.6667 19.8949 12.2277 18.8351 11.4463 18.0537C10.6649 17.2723 9.60507 16.8333 8.5 16.8333M12.6667 21H39.75M8.5 16.8333V2.25M4.33333 33.5C4.33333 34.6051 4.77232 35.6649 5.55372 36.4463C6.33512 37.2277 7.39493 37.6667 8.5 37.6667M4.33333 33.5C4.33333 32.3949 4.77232 31.3351 5.55372 30.5537C6.33512 29.7723 7.39493 29.3333 8.5 29.3333M4.33333 33.5H2.25M8.5 37.6667C9.60507 37.6667 10.6649 37.2277 11.4463 36.4463C12.2277 35.6649 12.6667 34.6051 12.6667 33.5M8.5 37.6667V39.75M12.6667 33.5C12.6667 32.3949 12.2277 31.3351 11.4463 30.5537C10.6649 29.7723 9.60507 29.3333 8.5 29.3333M12.6667 33.5H29.3333M29.3333 33.5C29.3333 34.6051 29.7723 35.6649 30.5537 36.4463C31.3351 37.2277 32.3949 37.6667 33.5 37.6667M29.3333 33.5C29.3333 32.3949 29.7723 31.3351 30.5537 30.5537C31.3351 29.7723 32.3949 29.3333 33.5 29.3333M33.5 37.6667C34.6051 37.6667 35.6649 37.2277 36.4463 36.4463C37.2277 35.6649 37.6667 34.6051 37.6667 33.5M33.5 37.6667V39.75M37.6667 33.5C37.6667 32.3949 37.2277 31.3351 36.4463 30.5537C35.6649 29.7723 34.6051 29.3333 33.5 29.3333M37.6667 33.5H39.75M21 2.25V39.75"
+                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                Highlights
+            </a>
+            <a class="game-btn" onclick="openStartScreen()">
+                <div class="game-btn-icon">
+                    <svg width="50" height="51" viewBox="0 0 50 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25 10.9167V40.0833M10.4167 25.5H39.5834" stroke="currentColor" stroke-width="4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                New Game
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
