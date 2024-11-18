@@ -355,6 +355,18 @@ select {
   font-weight: 600;
 }
 
+.author-text {
+  padding-top: 40px;
+  color: var(--grid-border);
+  opacity: 0.5;
+  text-align: center;
+  font-family: Inter;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
 #difficulty-text {
   color: var(--grid-border);
 }
