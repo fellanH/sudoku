@@ -355,6 +355,10 @@ select {
   font-weight: 600;
 }
 
+.author-link {
+  color: var(--grid-border);
+}
+
 .author-text {
   padding-top: 40px;
   color: var(--grid-border);

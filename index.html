@@ -15,10 +15,15 @@
         <h1>Sudoku</h1>
         <p class="big-text">A simple sudoku game</p>
         <p class="small-text">Select a difficulty:</p>
-        <button onclick="setDifficulty(55, 'Easy')">Easy</button>
+        <!-- <button onclick="setDifficulty(55, 'Easy')">Easy</button>
         <button onclick="setDifficulty(40, 'Medium')">Medium</button>
-        <button onclick="setDifficulty(28, 'Hard')">Hard</button>
-        <p class="author-text">Created by Felix Hellström</p>
+        <button onclick="setDifficulty(28, 'Hard')">Hard</button> -->
+        <button onclick="setDifficultyNew(0, 'Easy')">Easy</button>
+        <button onclick="setDifficultyNew(0, 'Medium')">Medium</button>
+        <button onclick="setDifficultyNew(0, 'Hard')">Hard</button>
+        <button onclick="setDifficultyNew(0, 'Diabolical')">Diabolical</button>
+        <p class="author-text">Created by Felix Hellström - All puzzles from <a class="author-link"
+                href="https://github.com/grantm/sudoku-exchange-puzzle-bank?tab=readme-ov-file">Sudoku Exchange</a></p>
     </div>
     <div class="nav">
         <a onclick="openStartScreen()">Back</a>

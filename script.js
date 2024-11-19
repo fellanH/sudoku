@@ -665,3 +665,75 @@ document.addEventListener("click", (e) => {
     selectedCell = null;
   }
 });
+
+// Function to parse a puzzle string from the file format
+function parsePuzzleString(puzzleString) {
+  // Skip first 13 characters (12 hash + space)
+  const digits = puzzleString.substring(13, 94);
+  return digits.split("").map((d) => parseInt(d));
+}
+
+// Function to convert linear array to 2D board
+function arrayToBoard(array) {
+  const board = [];
+  for (let i = 0; i < 9; i++) {
+    board[i] = array.slice(i * 9, (i + 1) * 9);
+  }
+  return board;
+}
+
+// Function to load puzzles from file
+async function loadPuzzles(difficulty) {
+  const fileName = difficulty.toLowerCase() + ".txt";
+  try {
+    const response = await fetch(
+      `sudoku-exchange-puzzle-bank-master/${fileName}`
+    );
+    const text = await response.text();
+    const puzzles = text.split("\n").filter((line) => line.trim());
+    // Get a random puzzle
+    const randomPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+    return parsePuzzleString(randomPuzzle);
+  } catch (error) {
+    console.error("Error loading puzzles:", error);
+    return null;
+  }
+}
+
+async function setDifficultyNew(cells, difficultyText) {
+  // Clear the grid first
+  const cells2 = Array.from(document.getElementsByClassName("cell"));
+  cells2.forEach((cell) => {
+    cell.textContent = "";
+    cell.classList.remove("initial", "error", "selected", "highlighted");
+  });
+  initialCells.clear();
+
+  // Update difficulty text
+  document.getElementById("difficulty-text").textContent = difficultyText;
+
+  // Load and set up puzzle
+  const puzzleArray = await loadPuzzles(difficultyText);
+  if (!puzzleArray) {
+    console.error("Failed to load puzzle");
+    return;
+  }
+
+  const board = arrayToBoard(puzzleArray);
+
+  // Fill the grid with the loaded puzzle
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      const cell = cells2[i * 9 + j];
+      if (board[i][j] !== 0) {
+        cell.textContent = board[i][j];
+        cell.classList.add("initial");
+        initialCells.add(cell);
+      }
+    }
+  }
+
+  // Hide start screen and show game
+  document.querySelector(".start-screen").style.display = "none";
+  updateHelperCells();
+}
