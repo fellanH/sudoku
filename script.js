@@ -9,6 +9,13 @@ let notes = Array(81)
   .fill()
   .map(() => new Set());
 
+const puzzleCache = {
+  easy: null,
+  medium: null,
+  hard: null,
+  diabolical: null,
+};
+
 // Create 9x9 grid
 for (let i = 0; i < 81; i++) {
   const cell = document.createElement("div");
@@ -466,6 +473,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isDarkTheme) {
     document.body.classList.add("dark-theme");
   }
+  // Add preloading
+  preloadPuzzles();
 });
 
 function toggleNoteMode() {
@@ -682,18 +691,57 @@ function arrayToBoard(array) {
   return board;
 }
 
-// Function to load puzzles from file
+// Modified loadPuzzles function
 async function loadPuzzles(difficulty) {
+  // Check cache first
+  if (puzzleCache[difficulty.toLowerCase()]) {
+    const puzzles = puzzleCache[difficulty.toLowerCase()];
+    return puzzles[Math.floor(Math.random() * puzzles.length)];
+  }
+
   const fileName = difficulty.toLowerCase() + ".txt";
   try {
     const response = await fetch(
-      `sudoku-exchange-puzzle-bank-master/${fileName}`
+      `sudoku-exchange-puzzle-bank-master/${fileName}`,
+      {
+        headers: {
+          Accept: "text/plain",
+          "Cache-Control": "max-age=3600",
+        },
+      }
     );
-    const text = await response.text();
-    const puzzles = text.split("\n").filter((line) => line.trim());
-    // Get a random puzzle
-    const randomPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
-    return parsePuzzleString(randomPuzzle);
+
+    // Use streaming to process the file in chunks
+    const reader = response.body.getReader();
+    const chunks = [];
+    const decoder = new TextDecoder();
+    let puzzles = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
+
+      // Process only complete lines
+      for (const line of lines) {
+        if (line.trim()) {
+          puzzles.push(parsePuzzleString(line));
+        }
+
+        // Only cache first 1000 puzzles to save memory
+        if (puzzles.length >= 1000) break;
+      }
+
+      if (puzzles.length >= 1000) break;
+    }
+
+    // Cache the processed puzzles
+    puzzleCache[difficulty.toLowerCase()] = puzzles;
+
+    // Return a random puzzle
+    return puzzles[Math.floor(Math.random() * puzzles.length)];
   } catch (error) {
     console.error("Error loading puzzles:", error);
     return null;
@@ -736,4 +784,15 @@ async function setDifficultyNew(cells, difficultyText) {
   // Hide start screen and show game
   document.querySelector(".start-screen").style.display = "none";
   updateHelperCells();
+}
+
+// Add this to preload puzzles when browser is idle
+function preloadPuzzles() {
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(() => {
+      ["easy", "medium", "hard", "diabolical"].forEach((difficulty) => {
+        loadPuzzles(difficulty);
+      });
+    });
+  }
 }
